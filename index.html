@@ -4,7 +4,6 @@
  *Github: [voidwalker](https://github.com/xuechao-chen/)*
  *Email: xuechao-chen.outlook.com*
 
-
 # About Me
 本人目前研二，就读于四川大学计算机学院*图形图像研究所*，热爱计算机图形学，研究方向包含:
 
@@ -17,41 +16,56 @@
 
 # Projects
 
-## 大型绘制系统的负载平衡算法
+(##) 大型绘制系统的负载平衡算法
 
-## 人群疏散中的路径规划算法
+(##) 人群疏散中的路径规划算法
 
 室内人群疏散的路径规划问题涉及到给定空间结构/通道容纳量/出口流量等约束，求解大量人群的最优疏散路径，使得总疏散时间最短。在人群密集情况下，选择最短路径往往造成严重拥堵，甚至发生踩踏。基于预先计算的人群模拟技术进行路径优化调整的方法难以应对疏散过程中的人流状态/场景状态变化，如场景破坏或人流突增。
 
-本课题提出的算法利用智能摄像头捕获的人群动态信息，根据人群当前的移动速度和方向建立人群分布预测模型，以此对人群的疏散路径进行动态调整。此外，提出了一个分阶段的规划策略来避免全局疏散路径的动态更新，以达到实时的计算要求。
+本课题提出的算法利用智能摄像头捕获的人群动态信息，根据人群当前的移动速度和方向建立人群分布预测模型，以此对人群的疏散路径进行动态调整。此外，提出了一个分阶段的规划策略来避免全局疏散路径的动态更新以达到实时的计算要求，同时适应场景的动态变化和修正预测模型的决策偏差。
 
 [相关成果](#publications/astage-wisepathplanningapproachforcrowdevacuationinbuildings.)发表在CCF C类会议International Conference on Computer Animation and Social Agents (CASA 2019)。
 
 ![人群疏散的三种路径规划算法对比](projects/crowd_evacuation/teaser.png)
 
-## 基于vulkan的HIVE渲染引擎
+(##) 基于vulkan的HIVE渲染引擎
 
-## 华为软件挑战赛CodeCraft2019
+(##) 华为软件挑战赛CodeCraft2019
 
-## 论文复现: Optimized Route for Crowd Evacuation(eg16')
+(##) 论文复现: Optimized Route for Crowd Evacuation(eg16')
 
-## 论文复现: Real-time Global Illumination using Precomputed Light Field Probes(i3d17')
+(##) 论文复现: Real-time Global Illumination using Precomputed Light Field Probes(i3d17')
 
-## 论文复现: Dynamic Diffuse Global Illumination with Ray-traced Irradiance Fields(jcgt19')
+![基于预计算的光场探针实现静态场景的diffuse和glossy多次反射GI效果](projects/light_field_probes/teaser.png)
 
-## 改进的基于VPL的全局光照算法
+(##) 论文复现: Dynamic Diffuse Global Illumination with Ray-traced Irradiance Fields(jcgt19')
 
-## 改进的基于光场探针的全局光照算法
+(##) 改进的基于VPL的全局光照算法
 
-## 改进的基于光追的动态全局光照算法
+(##) 改进的基于光场探针的全局光照算法
+
+![改进的基于光场探针的GI算法能适应动态光照环境的变化，同时维持原有的diffuse/glossy效果](projects/light_g_buffers/teaser.png)
+
+(##) 改进的基于光追的动态全局光照算法
 
 # Publications
 
-## A Stage-wise Path Planning Approach for Crowd Evacuation in Buildings.
+(##) 2020
 
-## Efficiently Reconstruct Light Field Probes from Light-G-buffers.
+- **Combine Precomputed Occlusion Fields and Ray-traced Shadow Fields.** <br/>
+    TBD
 
-## Combine Precomputed Occlusion Fields and Ray-traced Shadow Fields
+- **Efficiently Reconstruct Light Field Probes from Light-G-buffers.** <br/>
+    <u>Xuechao Chen</u>, Yu Nie, Jianwei Chen, Yuning Gong, Ziqi Luo, Yanli Liu and Yanci Zhang	 <br/>
+    Submitted to ACM SIGGRAPH Symposium on Interactive 3D Graphics and Games, 2020 <br />
+    [[Video](#)]
+
+(##) 2019
+
+- **A Stage-wise Path Planning Approach for Crowd Evacuation in Buildings.** <br /> 
+    <u>Xuechao Chen</u>, Wenjing Li, Yu Nie, Rui Chen, Kangben He, Yanli Liu and Yanci Zhang <br />
+    *In Proceedings of the 32nd International Conference on Computer Animation and Social Agents (CASA ’19).* <br />
+    [[Abstract](#)] [[Code](#)] [[Pdf](#)] [[Video](#)]
 
 <!-- Markdeep: -->
 <style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src="markdeep.min.js" charset="utf-8"></script><script src="https://casual-effects.com/markdeep/latest/markdeep.min.js" charset="utf-8"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible");markdeepOptions = {tocStyle:'short'};</script>
