@@ -17,13 +17,23 @@
 
 (##) 大型绘制系统的负载平衡算法
 
+大型绘制系统，如飞行模拟系统，通常需要GPU集群进行并行渲染以满足实时的要求。将绘制帧分块分发到不同的GPU上渲染涉及到负载平衡算法的优化。优化的目标是使得分发的绘制块的渲染时间与相应的GPU处理能力成正比，使得所有绘制块在相同时间内渲染完成。
+
+由于绘制帧的不同像素/区域的渲染时间存在较大的差异，采用平均分块进行分发导致部分GPU空闲以及总体绘制时间加长。利用帧间相关性可以在绘制完一帧后获取各分块的绘制时间，进而根据分块调整。然而，场景/光照条件的变化会破坏帧间相关性，导致基于帧间相关的分块调整失效。这归结于无法在绘制前获取各分块的绘制时间来进行优化调整。
+
+本课题尝试在渲染发生前预测给定分块方式的各分块绘制时间。基于预测的各分块绘制时间，进行多次迭代“预测-分块调整“来得到最优的负载分发方式。观察到，分块的渲染时间与该分块采用的渲染算法特征密切相关，如采用OIT算法渲染时，分块出现的透明物体面积占比越大，绘制时间越长。这样的特征可以在实时中获取，并使用机器学习方法来预测其绘制时间。
+
+[相关成果](#publications)被CCF C类会议 Computer Graphics International (CGI2018)接收。
+
+项目详情见：[[项目主页](projects/load_balance/index.html)]  [[代码](https://github.com/xuechao-chen/RegressionForest)] [[论文](projects/crowd_evacuation/paper.pdf)]
+
 (##) 人群疏散中的路径规划算法
 
 室内人群疏散的路径规划问题涉及到给定空间结构/通道容纳量/出口流量等约束，求解大量人群的最优疏散路径，使得总疏散时间最短。在人群密集情况下，选择最短路径往往造成严重拥堵，甚至发生踩踏。基于预先计算的人群模拟技术进行路径优化调整的方法难以应对疏散过程中的人流状态/场景状态变化，如场景破坏或人流突增。
 
 本课题提出的算法利用智能摄像头捕获的人群动态信息，根据人群当前的移动速度和方向建立人群分布预测模型，以此对人群的疏散路径进行动态调整。此外，提出了一个分阶段的规划策略来避免全局疏散路径的动态更新以达到实时的计算要求，同时适应场景的动态变化和修正预测模型的决策偏差。
 
-[相关成果](#publications/astage-wisepathplanningapproachforcrowdevacuationinbuildings.)发表在CCF C类会议International Conference on Computer Animation and Social Agents (CASA 2019)。
+[相关成果](#publications)发表在CCF C类会议International Conference on Computer Animation and Social Agents (CASA 2019)。
 
 项目详情见：[[项目主页](projects/crowd_evacuation/index.html)]  [[代码](https://github.com/xuechao-chen/CrowdEvacuation)] [[论文](projects/crowd_evacuation/paper.pdf)] [[Demo](projects/crowd_evacuation/demo.mp4)]
 
@@ -67,6 +77,11 @@
     <u>Xuechao Chen</u>, Wenjing Li, Yu Nie, Rui Chen, Kangben He, Yanli Liu and Yanci Zhang <br />
     *In Proceedings of the 32nd International Conference on Computer Animation and Social Agents (CASA ’19).* <br />
     [[Abstract](https://dl.acm.org/doi/10.1145/3328756.3328757)] [[Code](https://github.com/xuechao-chen/CrowdEvacuation)] [[Pdf](projects/crowd_evacuation/paper.pdf)] [[Video](projects/crowd_evacuation/demo.mp4)]
+
+(##) 2018
+
+- **Screen-based Load Balancing Algorithm for Real-Time Parallel Rendering via Regression Forest ** <br />
+  Submitted to Computer Graphics International 2018.    
 
 <!-- Markdeep: -->
 

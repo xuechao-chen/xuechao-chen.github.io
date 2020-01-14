@@ -1,0 +1,36 @@
+<meta charset="utf-8">
+**大型绘制系统的负载平衡算法**
+ [[代码](https://github.com/xuechao-chen/RegressionForest)] [[论文](paper.pdf)] [[Demo](demo.mp4)] 
+ ![](teaser.png)
+
+# 项目简介
+
+大型绘制系统，如飞行模拟系统，通常需要GPU集群进行并行渲染以满足实时的要求。将绘制帧分块分发到不同的GPU上渲染涉及到负载平衡算法的优化。优化的目标是使得分发的绘制块的渲染时间与相应的GPU处理能力成正比，使得所有绘制块在相同时间内渲染完成。
+
+由于绘制帧的不同像素/区域的渲染时间存在较大的差异，采用平均分块进行分发导致部分GPU空闲以及总体绘制时间加长。利用帧间相关性可以在绘制完一帧后获取各分块的绘制时间，进而根据分块调整。然而，场景/光照条件的变化会破坏帧间相关性，导致基于帧间相关的分块调整失效。这归结于无法在绘制前获取各分块的绘制时间来进行优化调整。
+
+本课题尝试在渲染发生前预测给定分块方式的各分块绘制时间。基于预测的各分块绘制时间，进行多次迭代“预测-分块调整“来得到最优的负载分发方式。观察到，分块的渲染时间与该分块采用的渲染算法特征密切相关，如采用OIT算法渲染时，分块出现的透明物体面积占比越大，绘制时间越长。这样的特征可以在实时中获取，并使用机器学习方法来预测其绘制时间。
+
+项目采用`C++`和`HIVE`引擎实现，使用`openmp`进行多线程加速，绘制系统包含LLL,OIT,以及SSAO主要绘制算法。
+
+# 主要流程
+
+(##) 构建高性能并行的回归森林
+
+
+
+(##) 训练数据的采集与训练
+
+(##) 基于训练模型的运行时负载调度
+
+我们使用不同分块方式，不同渲染算法设置采集大量渲染数据集，数据集包含分块的子窗口特征，相机视点特征，绘制算法特征以及相应的绘制时间，并采用高度并行高效的随机森林算法来进行模型训练。在运行时阶段，基于模型的预测时间来迭代调整分块方式，达到负载平衡的理想条件。
+
+
+# 成果
+
+- **Screen-based Load Balancing Algorithm for Real-Time Parallel Rendering via Regression Forest ** <br />
+  Submitted to Computer Graphics International 2018.    
+
+<!-- Markdeep: -->
+
+<style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src="markdeep.min.js" charset="utf-8"></script><script src="https://casual-effects.com/markdeep/latest/markdeep.min.js" charset="utf-8"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible");markdeepOptions = {tocStyle:'none'};</script>
