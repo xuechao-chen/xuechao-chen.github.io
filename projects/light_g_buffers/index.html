@@ -1,0 +1,77 @@
+<meta charset="utf-8">
+**人群疏散中的路径规划算法**
+ [[代码](https://github.com/xuechao-chen/CrowdEvacuation)] [[论文](paper.pdf)] [[Demo](demo.mp4)] 
+ ![](teaser.png)
+
+
+# 项目简介
+
+室内人群疏散的路径规划问题涉及到给定空间结构/通道容纳量/出口流量等约束，求解大量人群的最优疏散路径，使得总疏散时间最短。在人群密集情况下，选择最短路径往往造成严重拥堵，甚至发生踩踏。基于预先计算的人群模拟技术进行路径优化调整的方法难以应对疏散过程中的人流状态/场景状态变化，如场景破坏或人流突增。
+
+本课题提出的算法利用智能摄像头捕获的人群动态信息，根据人群当前的移动速度和方向建立人群分布预测模型，以此对人群的疏散路径进行动态调整。此外，提出了一个分阶段的规划策略来避免全局疏散路径的动态更新以达到实时的计算要求，同时适应场景的动态变化和修正预测模型的决策偏差。
+
+项目采用`C++`实现，使用OpenCV进行可视化，使用`google test`进行单元测试，代码行数约1.5k。
+
+
+
+  ![Demo](demo.mp4 width="100%") 
+
+# 主要流程
+
+(##) 建立疏散场景双向连接图，分配初始疏散路径
+
+首先，建立疏散场景的navigation roadmap, 使用双向图来表示，其中道路为图中边，道路连接处为图中结点，另外设置交叉口和出口标志位方便进行疏散路径规划。边的权重初始化为对应道路的人群密度。
+
+然后，使用带权最短路径算法(Dijkstra/A*)为每个人确定到达某一出口的最短路径。为了减少计算量，在双向图的结点级别而不是每个人的级别上运行最短路径算法。由于从某一结点出发的最短路径存在且唯一，无向图中的最短路径组成由出口结点为父节点的树结构/有向图结构，如下图所示。
+
+![](figure1.png width="250px")
+
+得到由结点处出发的最短路径组成的树结构后，将人分配到对应的有向边等价于为每个人独立运行最短路径算法，大大减少了计算量。
+
+(##) 建立人群分布预测模型
+
+在人群密集情况下，最短路径往往会造成拥堵。人流分布时刻发生变化，基于当前的人群分布密度进行动态路径调整可以缓解最短路径的拥堵问题，但没有考虑到人群分布在未来时刻的影响。
+
+![](figure2.png)
+
+本课题提出了使用高斯模型对未来一段时间内的人群分布进行建模。对疏散场景每一个位置进行的人群时域分布建模难以达到实时响应要求。观察到，疏散过程中的拥堵通常发生在道路的交叉口处，我们只对交叉口的人群分布进行未来一段时间内的时域建模。
+
+由于人群流动不确定性非常强，对未来的人群分布进行建模的有效性随时间推进快速下降。为了保证有效性和建模效率，我们根据人群当前的运动速度和方向以及其行进路径，计算其到达下下个交叉口这段时间内对人群时域分布的影响。
+
+假设人群运动到下一个交叉口的时间 $\mathbf{t}$ 满足高斯分布。我们使用当前时刻 $\mathbf{t}$ 与期望到达时刻 $\mathbf{t'}$ 的差值来衡量方差。
+$$
+\sigma = \frac{ln(\mathbf{t'}-\mathbf{t}+1)}{c}
+$$
+根据上述建模，使用累积积分可以预测在道路交叉口处的人群时域分布。下图展示了只考虑8个人在未来一段时间内到达下一个交叉口 $A$ 的人群时域分布预测。
+
+ ![1](figure3.png width="250px") ![2](figure4.png width="350px") 
+
+(##) 基于预测模型的两阶段路径决策算法
+
+基于上述预测模型，可以较为准确的衡量**不久**的未来某个时刻的交叉口拥堵程度。为了保证预测模型的有效性，我们将运行时的路径规划分为两个阶段：1）从当前位置运动到下个交叉口，2）从下个交叉口运动到出口。基于这样的基本假设，交叉口越拥堵，对从交叉口出发运动到出口的时间影响越大，我们将交叉口的拥堵程度转换成道路通行的权重函数。
+
+$$
+t(v_{cr},\mathcal{T},\mathbf{t})=t_{1}(v_{cr},v_{NTP},\mathbf{t})+t_{2}(v_{NTP},\mathcal{T},\mathbf{t})
+$$
+$$
+t_{1}(v_{cr},v_{NTP},\mathbf{t})=\omega(\mathbf{CDF}(v_{cr},\mathbf{t}))\cdot\nonumber
+\tau(v_{cr},v_{NTP})
+$$
+$$
+t_{2}(v_{NTP}, \mathcal{T},\mathbf{t})=\omega(\mathbf{CDF}(v_{NTP},\mathbf{t}'))\cdot\nonumber
+\tau(v_{NTP},\mathcal{T})
+$$
+
+当运动交叉口时，重新根据上述模型进行路径重新规划。这样可以带来两个好处：1）动态响应场景/人流变化，有效利用人群分布预测模型；2）避免全局路径动态更新，减少计算量。
+
+
+# 成果
+
+- **A Stage-wise Path Planning Approach for Crowd Evacuation in Buildings.** <br /> 
+    <u>Xuechao Chen</u>, Wenjing Li, Yu Nie, Rui Chen, Kangben He, Yanli Liu and Yanci Zhang <br />
+    *In Proceedings of the 32nd International Conference on Computer Animation and Social Agents (CASA ’19).* <br />
+    [[Abstract](https://dl.acm.org/doi/10.1145/3328756.3328757)] [[Code](https://github.com/xuechao-chen/CrowdEvacuation)] [[Pdf](paper.pdf)] [[Video](demo.mp4)]
+
+<!-- Markdeep: -->
+
+<style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src="markdeep.min.js" charset="utf-8"></script><script src="https://casual-effects.com/markdeep/latest/markdeep.min.js" charset="utf-8"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible");markdeepOptions = {tocStyle:'none'};</script>
