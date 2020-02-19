@@ -1,0 +1,31 @@
+<meta charset="utf-8">
+**基于VPL和光线追踪的全局光照算法**
+
+ ![](teaser.png)
+
+# 项目简介
+
+虚拟点光源的方法来做间接光照计算是一类很常用的方法。直接光照照射到三角面片上，三角面片自然成为一个间接的光源，再用这些VPL来做光照计算，就可以得到一次间接光照效果。反射阴影图就是这样的算法，RSM在阴影图的基础再生成额外的光照贴图(Position & Normal）和辐射通量radiant flux)，光照贴图上的每一个像素点都可以看成一个VPL，这一类屏幕空间的方法的缺点是：
+
+- 多光源需要生成多张贴图
+- 屏幕之外GI效果缺失
+- 跟分辨率相关，跟光源近的地方VPL密度大，反之密度小
+
+# 主要流程
+
+结合现在的RTX技术，我们提出了一种基于世界空间的VPL算法，算法流程是：
+
+1. 对场景进行均匀四边形remesh，在每个四边形上生成一个VPL，这样可以保证VPL代表的面元面积大致相当，避免出现光照计算明暗过度跳变的情形。
+2. 我们把remesh后的四边形上的VPL叫做最精细层的VPL，在这一层VPL的基础上进行VPL的合并，建立一个VPL tree，来做VPL的LoD，来大大减少VPL的计算。合并的方式是在VPL的邻域进行搜索，选择最优的邻域VPL进行合并。
+3. 有了VPL tree之后，我们用light cut的思想来做VPL的LoD，首先从VPL tree的最顶层出发，如果合并后的VPL的跟视点的距离比较小，我们对这个VPL往下拆分，直到找到一个VPL cut，它的粒度跟视点的距离是正相关的，这样就等同于我们做了从视点出发的VPL LoD。
+4. 并不是VPL cut的所有VPL都要参与光照计算，判定VPL是否参与光照计算需要直到VPL跟光源的可见性，由于这种可见性是不相干的可见性判断，光追天然比光栅化合适这个任务。因此，我们使用RTX技术来确定VPL cut中被激活的VPL。最后用这些VPL来进行最后的光照计算。
+
+我们的方法有几个好处：
+
+1. VPL的生成时基于物体空间的
+2. 建立了VPL cut来做视点出发的VPL LoD而不是光源出发的LoD，效果更好
+3. 使用RTX确定VPL位置，比使用光栅化效率更高。
+
+<!-- Markdeep: -->
+
+<style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src="markdeep.min.js" charset="utf-8"></script><script src="https://casual-effects.com/markdeep/latest/markdeep.min.js" charset="utf-8"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible");markdeepOptions = {tocStyle:'none'};</script>

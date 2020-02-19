@@ -1,7 +1,8 @@
 <meta charset="utf-8">
 **大型绘制系统的负载平衡算法**
- [[代码](https://github.com/xuechao-chen/RegressionForest)] [[论文](paper.pdf)] [[Demo](demo.mp4)] 
+ [[代码](https://github.com/xuechao-chen/RegressionForest)]
  ![](teaser.png)
+
 
 # 项目简介
 
@@ -11,7 +12,7 @@
 
 本课题尝试在渲染发生前预测给定分块方式的各分块绘制时间。基于预测的各分块绘制时间，进行多次迭代“预测-分块调整“来得到最优的负载分发方式。观察到，分块的渲染时间与该分块采用的渲染算法特征密切相关，如采用OIT算法渲染时，分块出现的透明物体面积占比越大，绘制时间越长。这样的特征可以在实时中获取，并使用机器学习方法来预测其绘制时间。
 
-项目采用`C++`和`HIVE`引擎实现，使用`openmp`进行多线程加速，绘制系统包含LLL,OIT,以及SSAO主要绘制算法。
+项目采用`C++`和`HIVE`引擎实现，使用`openmp`进行多线程加速，绘制系统包含LLL,OIT,以及SSAO主要绘制算法，代码行数约4k。
 
 # 主要流程
 
